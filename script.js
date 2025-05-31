@@ -83,6 +83,73 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = 'Reprodução interrompida.';
     }
 
+    // Função para selecionar as vozes Google prioritárias
+    function selectGoogleVoice(voices, languageCode) {
+        // Definir as vozes Google prioritárias
+        const googleVoices = {
+            'pt-BR': 'Google português do Brasil',
+            'en-US': 'Google US English'
+        };
+        
+        // Obter a voz prioritária para o idioma selecionado
+        const priorityVoice = googleVoices[languageCode];
+        
+        // 1. Tentar encontrar a voz Google específica para o idioma
+        if (priorityVoice) {
+            const googleVoice = voices.find(voice => 
+                voice.name.includes(priorityVoice)
+            );
+            
+            if (googleVoice) {
+                console.log(`Voz Google prioritária selecionada: ${googleVoice.name}`);
+                return googleVoice;
+            }
+        }
+        
+        // 2. Tentar encontrar qualquer voz Google para o idioma
+        const anyGoogleVoice = voices.find(voice => 
+            voice.name.includes('Google') && 
+            voice.lang.includes(languageCode.split('-')[0])
+        );
+        
+        if (anyGoogleVoice) {
+            console.log(`Voz Google alternativa selecionada: ${anyGoogleVoice.name}`);
+            return anyGoogleVoice;
+        }
+        
+        // 3. Tentar encontrar uma voz masculina para o idioma
+        const maleVoice = voices.find(voice => 
+            voice.lang.includes(languageCode.split('-')[0]) && 
+            !voice.name.toLowerCase().includes('female') && 
+            !voice.name.toLowerCase().includes('feminina')
+        );
+        
+        if (maleVoice) {
+            console.log(`Voz masculina selecionada: ${maleVoice.name}`);
+            return maleVoice;
+        }
+        
+        // 4. Usar qualquer voz para o idioma
+        const anyVoice = voices.find(voice => 
+            voice.lang.includes(languageCode.split('-')[0])
+        );
+        
+        if (anyVoice) {
+            console.log(`Voz no idioma selecionada: ${anyVoice.name}`);
+            return anyVoice;
+        }
+        
+        // 5. Como último recurso, usar a primeira voz disponível
+        if (voices.length > 0) {
+            console.log(`Primeira voz disponível selecionada: ${voices[0].name}`);
+            return voices[0];
+        }
+        
+        // Nenhuma voz encontrada
+        console.log('Nenhuma voz disponível');
+        return null;
+    }
+
     // Função para iniciar a reprodução
     function startSpeaking() {
         if (isProcessing) return;
@@ -103,38 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
         utterance.lang = languageSelect.value;
         utterance.rate = parseFloat(speedControl.value);
         
-        // Selecionar a voz apropriada
+        // Selecionar a voz prioritária (Google)
         let voices = synth.getVoices();
-        let selectedVoice = null;
-        
-        // Tentar encontrar uma voz masculina para o idioma selecionado
-        for (let voice of voices) {
-            if (voice.lang.includes(languageSelect.value.split('-')[0]) && 
-                !voice.name.toLowerCase().includes('female') && 
-                !voice.name.toLowerCase().includes('feminina')) {
-                selectedVoice = voice;
-                break;
-            }
-        }
-        
-        // Se não encontrar uma voz masculina, usar qualquer voz para o idioma
-        if (!selectedVoice) {
-            for (let voice of voices) {
-                if (voice.lang.includes(languageSelect.value.split('-')[0])) {
-                    selectedVoice = voice;
-                    break;
-                }
-            }
-        }
-        
-        // Se ainda não encontrar, usar a primeira voz disponível
-        if (!selectedVoice && voices.length > 0) {
-            selectedVoice = voices[0];
-        }
+        let selectedVoice = selectGoogleVoice(voices, languageSelect.value);
         
         if (selectedVoice) {
             utterance.voice = selectedVoice;
             console.log("Voz selecionada:", selectedVoice.name);
+            statusMessage.textContent = `Processando com voz: ${selectedVoice.name}`;
         }
 
         // Eventos da utterance
