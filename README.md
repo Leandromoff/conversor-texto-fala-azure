@@ -9,8 +9,11 @@ O Conversor de Texto para Fala oferece uma interface intuitiva para transformar 
 ### Principais recursos:
 
 - Conversão de texto para fala em tempo real
-- Priorização automática das vozes Google (Google português do Brasil e Google US English)
-- Suporte a múltiplos idiomas (Português do Brasil e Inglês dos EUA)
+- Seleção entre três idiomas: Inglês (EUA), Inglês (Reino Unido) e Português (Brasil)
+- Priorização automática das vozes Google para cada idioma:
+  - Google US English para Inglês (EUA)
+  - Google UK English Male para Inglês (Reino Unido)
+  - Google português do Brasil para Português (Brasil)
 - Controle de velocidade da fala
 - Contagem automática de palavras e caracteres
 - Interface responsiva para uso em dispositivos móveis e desktop
@@ -37,19 +40,13 @@ Para melhor experiência e acesso às vozes Google de alta qualidade, recomenda-
 
 1. Acesse a aplicação através do link de deployment
 2. Digite o texto desejado na área de texto
-3. Selecione o idioma preferido (Português ou Inglês)
+3. Selecione o idioma preferido:
+   - Inglês (EUA) - Utiliza a voz Google US English
+   - Inglês (Reino Unido) - Utiliza a voz Google UK English Male
+   - Português (Brasil) - Utiliza a voz Google português do Brasil
 4. Ajuste a velocidade da fala conforme necessário
 5. Clique em "Reproduzir" para ouvir o texto
 6. Para interromper a reprodução, clique em "Parar"
-
-## Vozes Priorizadas
-
-Esta versão do conversor foi otimizada para priorizar as seguintes vozes de alta qualidade:
-
-- **Google português do Brasil**: Para textos em português, oferece a melhor qualidade e naturalidade
-- **Google US English**: Para textos em inglês, oferece voz masculina de alta qualidade
-
-Se estas vozes não estiverem disponíveis no navegador do usuário, o sistema utilizará automaticamente as melhores vozes alternativas disponíveis.
 
 ## Desenvolvimento
 

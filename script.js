@@ -15,6 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const wordCount = document.getElementById('word-count');
     const charCount = document.getElementById('char-count');
 
+    // Textos pré-definidos para cada idioma
+    const predefinedTexts = {
+        'en': `A Regenerative AI is a smart computer program. It can create things like texts, images, or music. It learns from data and gives new ideas. But it does not think like a human.
+
+An AGI means Artificial General Intelligence. It is a computer that can think, learn, and understand like a human. It can do many jobs, not only one task.
+
+So, the difference is:
+Regenerative AI is good at one type of work (like writing or drawing).
+AGI can think and solve many problems like a person.`,
+        'pt': `Uma IA Regenerativa é um programa de computador inteligente. Ela pode criar coisas como textos, imagens ou músicas. Aprende com dados e oferece novas ideias. Mas não pensa como um humano.
+
+Uma AGI significa Inteligência Artificial Geral. É um computador que pode pensar, aprender e entender como um ser humano. Pode fazer muitos trabalhos, não só uma tarefa.
+
+Então, a diferença é:
+IA Regenerativa é boa em um tipo de trabalho (como escrever ou desenhar).
+AGI pode pensar e resolver muitos problemas como uma pessoa.`
+    };
+
     // Inicialização
     checkBrowserSupport();
     loadVoices();
@@ -23,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     textInput.addEventListener('input', updateTextStats);
     speedControl.addEventListener('input', updateSpeedValue);
     playBtn.addEventListener('click', handlePlayStop);
+    
+    // Adicionar event listener para mudança de idioma
+    languageSelect.addEventListener('change', handleLanguageChange);
 
     // Funções
     function checkBrowserSupport() {
@@ -45,6 +66,30 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (synth.onvoiceschanged !== undefined) {
             synth.onvoiceschanged = setVoices;
+        }
+    }
+
+    // Função para lidar com a mudança de idioma
+    function handleLanguageChange() {
+        const selectedLanguage = languageSelect.value;
+        const baseLanguage = selectedLanguage.split('-')[0]; // 'en' ou 'pt'
+        
+        // Verificar se o texto atual é diferente do texto pré-definido para qualquer idioma
+        const currentText = textInput.value.trim();
+        const isCustomText = currentText !== predefinedTexts['en'].trim() && 
+                            currentText !== predefinedTexts['pt'].trim() &&
+                            currentText !== '';
+        
+        // Se o texto for personalizado, perguntar antes de substituir
+        if (isCustomText) {
+            if (confirm('Deseja substituir o texto atual pelo texto padrão para o idioma selecionado?')) {
+                textInput.value = predefinedTexts[baseLanguage];
+                updateTextStats();
+            }
+        } else {
+            // Se não for texto personalizado, substituir automaticamente
+            textInput.value = predefinedTexts[baseLanguage];
+            updateTextStats();
         }
     }
 
@@ -85,16 +130,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para selecionar as vozes Google prioritárias
     function selectGoogleVoice(voices, languageCode) {
-        // Definir as vozes Google prioritárias
+        // Definir as vozes Google prioritárias para cada idioma/região específica
         const googleVoices = {
             'pt-BR': 'Google português do Brasil',
-            'en-US': 'Google US English'
+            'en-US': 'Google US English',
+            'en-GB': 'Google UK English Male'
         };
         
-        // Obter a voz prioritária para o idioma selecionado
+        // Obter a voz prioritária para o idioma/região selecionado
         const priorityVoice = googleVoices[languageCode];
         
-        // 1. Tentar encontrar a voz Google específica para o idioma
+        // 1. Tentar encontrar a voz Google específica para o idioma/região selecionado
         if (priorityVoice) {
             const googleVoice = voices.find(voice => 
                 voice.name.includes(priorityVoice)
@@ -106,40 +152,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // 2. Tentar encontrar qualquer voz Google para o idioma
-        const anyGoogleVoice = voices.find(voice => 
-            voice.name.includes('Google') && 
-            voice.lang.includes(languageCode.split('-')[0])
+        // 2. Tentar encontrar qualquer voz para o idioma/região específico
+        const baseLanguage = languageCode.split('-')[0];
+        const region = languageCode.split('-')[1];
+        
+        // Buscar qualquer voz que corresponda ao idioma e região específicos
+        const regionVoice = voices.find(voice => 
+            voice.lang === languageCode
         );
         
-        if (anyGoogleVoice) {
-            console.log(`Voz Google alternativa selecionada: ${anyGoogleVoice.name}`);
-            return anyGoogleVoice;
+        if (regionVoice) {
+            console.log(`Voz regional selecionada: ${regionVoice.name}`);
+            return regionVoice;
         }
         
-        // 3. Tentar encontrar uma voz masculina para o idioma
-        const maleVoice = voices.find(voice => 
-            voice.lang.includes(languageCode.split('-')[0]) && 
-            !voice.name.toLowerCase().includes('female') && 
-            !voice.name.toLowerCase().includes('feminina')
-        );
-        
-        if (maleVoice) {
-            console.log(`Voz masculina selecionada: ${maleVoice.name}`);
-            return maleVoice;
-        }
-        
-        // 4. Usar qualquer voz para o idioma
+        // 3. Tentar encontrar qualquer voz para o idioma base
         const anyVoice = voices.find(voice => 
-            voice.lang.includes(languageCode.split('-')[0])
+            voice.lang.includes(baseLanguage)
         );
         
         if (anyVoice) {
-            console.log(`Voz no idioma selecionada: ${anyVoice.name}`);
+            console.log(`Voz no idioma base selecionada: ${anyVoice.name}`);
             return anyVoice;
         }
         
-        // 5. Como último recurso, usar a primeira voz disponível
+        // 4. Como último recurso, usar a primeira voz disponível
         if (voices.length > 0) {
             console.log(`Primeira voz disponível selecionada: ${voices[0].name}`);
             return voices[0];
@@ -170,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         utterance.lang = languageSelect.value;
         utterance.rate = parseFloat(speedControl.value);
         
-        // Selecionar a voz prioritária (Google)
+        // Selecionar a voz prioritária (Google) com base no idioma/região selecionado
         let voices = synth.getVoices();
         let selectedVoice = selectGoogleVoice(voices, languageSelect.value);
         
@@ -213,4 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicialização adicional
     updateTextStats();
     updateSpeedValue();
+    
+    // Preencher o texto inicial com base no idioma selecionado
+    const initialLanguage = languageSelect.value.split('-')[0];
+    textInput.value = predefinedTexts[initialLanguage];
+    updateTextStats();
 });
