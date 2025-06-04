@@ -229,29 +229,18 @@ AGI pode pensar e resolver muitos problemas como uma pessoa.`
 
     // Função para lidar com o download de áudio
     function handleDownloadAudio() {
-        // Verificar se há texto para converter
         const text = textInput.value.trim();
-        if (text === '') {
-            statusMessage.textContent = 'Por favor, digite algum texto para converter em áudio.';
+        if (text === "") {
+            statusMessage.textContent = "Por favor, digite algum texto para converter em áudio.";
             return;
         }
-        
-        // Obter idioma e voz do valor selecionado
-        const { language, voice } = getLanguageAndVoice();
-        
-        // Chamar função do Azure Speech Service (implementada em azure-speech.js)
-        if (typeof downloadAzureAudio === 'function') {
-            downloadAzureAudio({
-                text: text,
-                voice: voice,
-                language: language,
-                speed: speedControl.value,
-                format: 'mp3'
-            });
+        if (typeof startGTTSDownload === "function") {
+            startGTTSDownload();
         } else {
-            statusMessage.textContent = 'Erro: Módulo Azure Speech não está carregado corretamente.';
+            statusMessage.textContent = "Funcionalidade de download indisponível.";
         }
     }
+        
 
     // Verificar periodicamente o estado da síntese de voz
     setInterval(() => {

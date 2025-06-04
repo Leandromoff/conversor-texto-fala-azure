@@ -1,43 +1,28 @@
-# Conversor de Texto para Fala com Azure TTS
+# Simple Text to Speech Demo
 
-Este projeto é um conversor de texto para fala que utiliza o Azure Speech Service para gerar áudios de alta qualidade com vozes neurais.
+This project provides a minimal example of converting text to speech in the browser. It relies on the Web Speech API and includes a small Node.js server to serve the static files and report a `/status` endpoint.
 
-## Características
+## Features
 
-- Interface minimalista e fácil de usar
-- Suporte para Inglês (AndrewMultilingualNeural) e Português (AntonioNeural)
-- Controle de velocidade da fala
-- Download de áudio em formato MP3
-- Servidor integrado que protege a chave do Azure
+- Predefined text in English and Portuguese
+- Adjustable speech rate
+- Optional download simulation using gTTS (see `download-audio.js`)
 
-## Como usar
+## Usage
 
-1. Instale as dependências:
-   ```
+1. Install the dependencies:
+   ```bash
    npm install
    ```
-
-2. Inicie o servidor:
+2. Start the server:
+   ```bash
+   npm start
    ```
-   node server.js
-   ```
+3. Open your browser at `http://localhost:3000`.
 
-3. Acesse o conversor em seu navegador:
-   ```
-   http://localhost:3000
-   ```
+Use the play button to listen to the text. The download button demonstrates how a backend service could provide an MP3 file.
 
-4. Digite o texto, selecione o idioma, ajuste a velocidade e clique em "Download" para baixar o áudio.
-
-## Notas técnicas
-
-- O servidor Node.js atua como intermediário entre o frontend e o Azure Speech Service
-- A chave do Azure está configurada diretamente no servidor para maior segurança
-- Todos os arquivos estão na raiz para facilitar a implantação
-- O servidor também serve os arquivos estáticos do frontend
-
-## Requisitos
+## Requirements
 
 - Node.js 14+
-- Navegador web moderno (Chrome, Firefox, Edge, Safari)
-- Conexão com internet
+- Modern browser with Web Speech API support
