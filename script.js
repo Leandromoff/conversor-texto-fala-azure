@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const speedControl = document.getElementById('speed-control');
     const speedValue = document.getElementById('speed-value');
     const playBtn = document.getElementById('play-btn');
-    const downloadBtn = document.getElementById('download-btn');
     const statusMessage = document.getElementById('status-message');
     const wordCount = document.getElementById('word-count');
     const charCount = document.getElementById('char-count');
@@ -41,7 +40,6 @@ AGI pode pensar e resolver muitos problemas como uma pessoa.`
     textInput.addEventListener('input', updateTextStats);
     speedControl.addEventListener('input', updateSpeedValue);
     playBtn.addEventListener('click', handlePlayButton);
-    downloadBtn.addEventListener('click', handleDownloadAudio);
     languageSelect.addEventListener('change', handleLanguageChange);
     
     // Funções
@@ -227,31 +225,6 @@ AGI pode pensar e resolver muitos problemas como uma pessoa.`
         synth.speak(utterance);
     }
 
-    // Função para lidar com o download de áudio
-    function handleDownloadAudio() {
-        // Verificar se há texto para converter
-        const text = textInput.value.trim();
-        if (text === '') {
-            statusMessage.textContent = 'Por favor, digite algum texto para converter em áudio.';
-            return;
-        }
-        
-        // Obter idioma e voz do valor selecionado
-        const { language, voice } = getLanguageAndVoice();
-        
-        // Chamar função do Azure Speech Service (implementada em azure-speech.js)
-        if (typeof downloadAzureAudio === 'function') {
-            downloadAzureAudio({
-                text: text,
-                voice: voice,
-                language: language,
-                speed: speedControl.value,
-                format: 'mp3'
-            });
-        } else {
-            statusMessage.textContent = 'Erro: Módulo Azure Speech não está carregado corretamente.';
-        }
-    }
 
     // Verificar periodicamente o estado da síntese de voz
     setInterval(() => {
