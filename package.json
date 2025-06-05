@@ -1,0 +1,8 @@
+{
+  "name": "conversor-texto-fala-azure",
+  "version": "1.0.0",
+  "description": "Projeto simples de conversor de texto para fala",
+  "scripts": {
+    "test": "node test/test.js"
+  }
+}
