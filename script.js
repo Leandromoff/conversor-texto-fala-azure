@@ -85,9 +85,15 @@ AGI pode pensar e resolver muitos problemas como uma pessoa.`
         const text = textInput.value;
         const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
         const chars = text.length;
-        
+
         wordCount.textContent = words;
         charCount.textContent = chars;
+        autoResize();
+    }
+
+    function autoResize() {
+        textInput.style.height = 'auto';
+        textInput.style.height = textInput.scrollHeight + 'px';
     }
 
     function updateSpeedValue() {
