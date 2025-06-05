@@ -52,8 +52,8 @@ textarea {
     padding: 15px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    resize: none;
-    overflow-y: hidden;
+    resize: vertical;
+    overflow-y: hidden; /* hide scrollbars so text input relies on manual resizing */
     font-size: 16px;
     background-color: var(--input-bg);
     color: var(--text-color);
